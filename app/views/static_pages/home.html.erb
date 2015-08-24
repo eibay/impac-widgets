@@ -27,13 +27,16 @@
             </h3>
           </div>
           <div style="height: 400px;" class="text-center">
-            <a href="" ng-hide="widget.isEnabled" data-toggle="modal" data-target=".bs-example-modal-sm" ng-click="clickedPanel($index)">
+            <a href="" ng-hide="widget.isEnabled" data-toggle="modal" data-target=".bs-example-modal-sm" ng-click="clickedPanel($index)" id="widget1_placeholder">
               <div style="height: 98%; width: 98%; background-color: #EEE; margin: 1%;">
                 <div style="padding-top:190px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> click to add widget</div>
               </div>
             </a>
-            <div ng-show="widget.isEnabled">
-              {{widget.body}}
+            <div style="height: 300px; width: 450px; padding: 3px;" class="map_region{{$index}}">
+              <div style="height: 300px; width: 450px;">
+                <div id="map{{$index}}" style="height: 100%; width: 100%;background: transparent url(/assets/ajax-loader.gif) no-repeat center center;"></div>
+              </div>
+              <div >this is {{widget.name}} widget</div>
             </div>
           </div>
         </div>
@@ -51,8 +54,8 @@
             <h4 class="modal-title" id="mySmallModalLabel">Select your widget type:</h4>
           </div>
           <div class="modal-body">
-            <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal" ng-click='addWidgetToPanel(0)'>"Employees location" widget</button>
-            <button type="button" class="btn btn-warning btn-lg btn-block" data-dismiss="modal" ng-click='addWidgetToPanel(1)'>"Sales flow" widget</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal" ng-click='addWidget(0, true)' id="button1">"Employees location" widget</button>
+            <button type="button" class="btn btn-warning btn-lg btn-block" data-dismiss="modal" ng-click='addWidget(1, true)'>"Sales flow" widget</button>
           </div>
         </div>
       </div>
@@ -60,3 +63,32 @@
 
   </div>
 </div>
+
+<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+<script>
+    function initMap(id) {
+        var bounds = new google.maps.LatLngBounds();
+        var mapOptions = {
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map' + id), mapOptions);
+
+        for (i = 0; i < data_json.length; i++) {
+            var position = new google.maps.LatLng(data_json[i]['latitude'], data_json[i]['longitude']);
+            bounds.extend(position);
+            marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: data_json[i]['city']
+            });
+            // Automatically center the map fitting all markers on the screen
+            map.fitBounds(bounds);
+        }
+
+        // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+        var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+            this.setZoom(2);
+            google.maps.event.removeListener(boundsListener);
+        });
+    }
+</script>

@@ -13,3 +13,13 @@
  *= require_tree .
  *= require_self
  */
+
+div.map_region0, div.map_region1 {
+    position: absolute !important;
+    left: -10000px !important;
+    display:block !important;
+}
+
+.move_map0, .move_map1 {
+    left: 0 !important;
+}
