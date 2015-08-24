@@ -1,0 +1,62 @@
+<div ng-app="maestrano">
+  <div ng-controller="MainController" class="container"><br/>
+
+    <div class="btn-group pull-right">
+      <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="glyphicon glyphicon-plus"></span> Add widget <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href ng-click='addWidget(0)'>"Employees location" widget</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href ng-click='addWidget(1)'>"Sales flow" widget</a></li>
+      </ul>
+    </div>
+
+    <header>
+      <h1 class="text-center page-header">Maestrano Widgets</h1>
+    </header>
+
+    <div class="row">
+
+      <div class="col-md-5 col-md-offset-1" ng-repeat="widget in widgets">
+        <div ng-class="{'panel panel-info' : $even, 'panel panel-success' : $odd}">
+          <div class="panel-heading">
+            <h3 class="panel-title" ng-hide="widget.name">Widget #{{$index + 1}}</h3>
+            <h3 class="panel-title" ng-show="widget.name">"{{widget.name}}" widget
+              <span class="glyphicon glyphicon-remove pull-right" ng-click="closeWidget($index)"></span>
+            </h3>
+          </div>
+          <div style="height: 400px;" class="text-center">
+            <a href="" ng-hide="widget.isEnabled" data-toggle="modal" data-target=".bs-example-modal-sm" ng-click="clickedPanel($index)">
+              <div style="height: 98%; width: 98%; background-color: #EEE; margin: 1%;">
+                <div style="padding-top:190px;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> click to add widget</div>
+              </div>
+            </a>
+            <div ng-show="widget.isEnabled">
+              {{widget.body}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- modal to select a widget type -->
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="myModal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+            <h4 class="modal-title" id="mySmallModalLabel">Select your widget type:</h4>
+          </div>
+          <div class="modal-body">
+            <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal" ng-click='addWidgetToPanel(0)'>"Employees location" widget</button>
+            <button type="button" class="btn btn-warning btn-lg btn-block" data-dismiss="modal" ng-click='addWidgetToPanel(1)'>"Sales flow" widget</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
