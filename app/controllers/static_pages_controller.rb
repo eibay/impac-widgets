@@ -3,6 +3,8 @@ require 'open-uri'
 require 'json'
 
 class StaticPagesController < ApplicationController
+  protect_from_forgery except: :cities
+
   search_limit = 20
 
   $employees_list_api = "https://api-impac-uat.maestrano.io/api/v1/get_widget?metadata[organization_ids][]=org-fbte&engine=hr/employees_list"
@@ -58,6 +60,10 @@ class StaticPagesController < ApplicationController
 
   def invoices
     render json: get_request($invoices_list_api, $maestrano_credentials)
+  end
+
+  def cities
+    render js: 'eqfeed_callback({"type":"FeatureCollection", "features":[{"type":"Feature","properties":{"count":4,"title":"San Francisco"},"geometry":{"type":"Point","coordinates":[-122.4382307,37.8020405]}},{"type":"Feature","properties":{"count":1,"title":"Sydney"},"geometry":{"type":"Point","coordinates":[151.2064365,-33.8706469]}}], "bbox":[-180.0,-180.0,180.0,180.0]})'
   end
 
   private
