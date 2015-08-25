@@ -1,101 +1,134 @@
-var data_json;
+var invoices_json;
 
-(function() {
-  var app = angular.module('maestrano', []);
+(function () {
+    var app = angular.module('maestrano', []);
 
-  app.controller('MainController', ['$scope', '$http', function($scope, $http) {
-    $scope.widgets = items;
-      $scope.clicked = -1;
+    app.controller('MainController', ['$scope', '$http', function ($scope, $http) {
+        $scope.widgets = items;
+        $scope.clicked = -1;
 
-    $scope.addWidget = function(type, isClicked) {
-        var id;
-        if (isClicked) {
-            id = $scope.clicked;
-        } else {
-            id = $scope.getEmptySpace();
+        $scope.addWidget = function (widgetTypeId, isClicked, index) {
+            var id;
+
+            if (index >= 0) {
+                id = index;
+                $("#widget" + index).empty();
+            } else if (isClicked) {
+                id = $scope.clicked;
+            } else {
+                id = $scope.getEmptySpace();
+            }
+
+            $scope.widgets[id].isEnabled = true;
+            $scope.widgets[id].name = $scope.getWidgetTitle(widgetTypeId);
+            $scope.widgets[id].type = widgetTypeId;
+
+            $scope.executeWidget(widgetTypeId, id);
+        };
+
+        // should reconsider after new widget addition
+        $scope.closeWidget = function (id) {
+            $scope.widgets[id].name = "";
+            $scope.widgets[id].isEnabled = false;
+
+            $('div.move_widget_div' + id).removeClass("move_widget_div" + id).addClass("widget_div" + id);
+        };
+
+        $scope.getWidgetTitle = function (id) {
+            var name = "";
+            switch (id) {
+                case 0:
+                case 1:
+                    name = "Employees location";
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                    name = "Sales flow";
+                    break;
+            }
+            return name;
+        };
+
+        $scope.clickedPanel = function (id) {
+            $scope.clicked = id;
+        };
+
+        $scope.getEmptySpace = function () {
+            for (var i = 0; i < items.length; i++) {
+                if (!items[i].isEnabled) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+
+        $scope.executeWidget = function (widgetTypeId, id) {
+            $('div.widget_div' + id).removeClass("widget_div" + id).addClass("move_widget_div" + id);
+            switch (widgetTypeId) {
+                case 0:
+                    initMap(id);
+                    break;
+                case 1:
+                    drawChart(id);
+                    break;
+                case 2:
+                    if (invoices_json)
+                        drawCountriesMap(id, invoices_json);
+                    else
+                        $scope.getJSON(widgetUrls[1], id, drawCountriesMap);
+                    break;
+                case 3:
+                    if (invoices_json)
+                        drawMarkersMap(id, invoices_json);
+                    else
+                        $scope.getJSON(widgetUrls[1], id, drawMarkersMap);
+                    break;
+                case 4:
+                    if (invoices_json)
+                        drawPieChart(id, invoices_json);
+                    else
+                        $scope.getJSON(widgetUrls[1], id, drawPieChart);
+                    break;
+            }
+        };
+
+        $scope.getJSON = function (uri, id, functionCallback) {
+            $http({
+                method: 'GET',
+                url: uri
+            }).
+                then(function (success) {
+                    invoices_json = success.data;
+                    functionCallback(id, success.data);
+                }, function (failure) {
+                    console.log = "JSON request failed: " + failure;
+                });
+        };
+    }]);
+
+    app.directive('widget', function(){
+        return {
+            restrict: "E",
+            templateUrl: "widget.html"
         }
+    });
 
-        $scope.widgets[id].isEnabled = true;
-        $scope.widgets[id].name = widgetNames[type];
-        $scope.widgets[id].type = type;
-        $scope.getSampleJSON(widgetUrls[type], id);
-        $('div.map_region' + id).removeClass("map_region" + id).addClass("move_map" + id);
-    };
-
-    $scope.addWidgetToPanel = function(type) {
-        var clickedId = $scope.clicked;
-      $scope.widgets[clickedId].isEnabled = true;
-      $scope.widgets[clickedId].name = widgetNames[type];
-      $scope.widgets[clickedId].type = type;
-      $scope.getSampleJSON(widgetUrls[type], clickedId);
-        console.log("addWidgetToPanel");
-        $('div.map_region' + clickedId).removeClass("map_region" + clickedId).addClass("move_map" + clickedId);
-    };
-
-    $scope.closeWidget = function(id) {
-      $scope.widgets[id].name = "";
-      $scope.widgets[id].isEnabled = false;
-        $('div.move_map' + id).removeClass("move_map" + id).addClass("map_region" + id);
-    };
-
-    $scope.getWidgetTitle = function(title) {
-      if (!isNaN(title)) {
-        return "Widget #" + title;
-      } else {
-        return '"' + title + '" widget';
-      }
-    };
-
-    $scope.clickedPanel = function(id) {
-      $scope.clicked = id;
-    };
-
-    $scope.getEmptySpace = function() {
-      for (var i = 0; i < items.length; i++) {
-        if (!items[i].isEnabled) {
-          return i;
+    var items = [
+        {
+            name: "",
+            type: -1,
+            isEnabled: false
+        },
+        {
+            name: "",
+            type: -1,
+            isEnabled: false
         }
-      }
-      return -1;
-    };
+    ];
 
-
-    $scope.getSampleJSON = function(uri, id) {
-      $scope.widgets[id].body = "";
-      $http({method: 'GET', 
-        url: uri }).
-        then(function(success) {
-          $scope.widgets[id].body = success.data;
-              data_json = success.data;
-              initMap(id);
-        }, function(failure) {
-          $scope.widgets[id].body = "JSON request failed: " + failure;
-        });
-    };
-  }]);
-
-  var items = [
-    {
-      name: "",
-      body: "",
-      type: -1,
-      isEnabled: false
-    },
-    {
-      name: "",
-      body: "",
-      type: -1,
-      isEnabled: false
-    }
-  ];
-
-  var widgetNames = [
-    "Employees location",
-    "Sales flow"
-  ];
-
-  var widgetUrls = [
-    "/employees",
-    "/invoices"
-  ];
+    var widgetUrls = [
+        "/employees",
+        "/invoices"
+    ];
 })();
