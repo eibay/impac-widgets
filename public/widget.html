@@ -1,14 +1,20 @@
 <div style="height: 350px; width: 450px; padding: 3px;" class="widget_div{{$index}}">
-    <div id="widget{{$index}}" style="height: 100%; width: 100%; margin-bottom: 10px; background: transparent url(/assets/ajax-loader.gif) no-repeat center center;"></div>
+    <div id="widget{{$index}}"
+         style="height: 100%; width: 100%; margin-bottom: 10px; background: transparent url(/assets/ajax-loader.gif) no-repeat center center;"></div>
 
     <div class="btn-group btn-group-justified" role="group" aria-label="Justified button group" ng-show="widget.type<2">
-        <a href class="btn btn-default" role="button" id="employee_map{{$index}}" ng-click='addWidget(0, false, $index)'>Map</a>
-        <a href class="btn btn-default" role="button" id="employee_data{{$index}}" ng-click='addWidget(1, false, $index)'>Data</a>
+        <a href class="btn btn-default" role="button" id="employee_map{{$index}}"
+           ng-click='addWidget(0, false, $index)'>Map</a>
+        <a href class="btn btn-default" role="button" id="employee_data{{$index}}"
+           ng-click='addWidget(1, false, $index)'>Data</a>
     </div>
 
-    <div class="btn-group btn-group-justified" role="group" aria-label="Justified button group" ng-show="widget.type>=2">
-        <a href class="btn btn-default" role="button" id="sales_countries{{$index}}" ng-click='addWidget(2, false, $index)'>Countries</a>
-        <a href class="btn btn-default" role="button" id="sales_cities{{$index}}" ng-click='addWidget(3, false, $index)'>Cities</a>
+    <div class="btn-group btn-group-justified" role="group" aria-label="Justified button group"
+         ng-show="widget.type>=2">
+        <a href class="btn btn-default" role="button" id="sales_countries{{$index}}"
+           ng-click='addWidget(2, false, $index)'>Countries</a>
+        <a href class="btn btn-default" role="button" id="sales_cities{{$index}}"
+           ng-click='addWidget(3, false, $index)'>Cities</a>
         <a href class="btn btn-default" role="button" id="sales_data{{$index}}" ng-click='addWidget(4, false, $index)'>Data</a>
     </div>
 

@@ -1,8 +1,8 @@
 // Widget type #0: Maps
 var map;
-function initMap(id) {
+function drawEmployeesCityMap(id) {
     map = new google.maps.Map(document.getElementById('widget' + id), {
-        center: { lat: 10, lng: -160 },
+        center: {lat: 10, lng: -160},
         zoom: 2,
         styles: mapStyle
     });
@@ -17,7 +17,7 @@ function initMap(id) {
         maxWidth: 500
     });
 
-    map.data.addListener('click', function(event) {
+    map.data.addListener('click', function (event) {
         infoWindow.setPosition(event.latLng);
         infoWindow.open(map);
         infoWindow.setContent(event.feature.getProperty('title') + ": " + event.feature.getProperty('count') + " employees");
@@ -83,9 +83,9 @@ var mapStyle = [{
 }];
 //--------------------------------------------------------------------------------
 // Widget type #1: Barchart
-google.load("visualization", "1.1", {packages:["bar"]});
+google.load("visualization", "1.1", {packages: ["bar"]});
 
-function drawChart(id) {
+function drawEmployeesDataChart(id) {
     var data = google.visualization.arrayToDataTable([
         ['Year', 'San Francisco', 'Sydney'],
         ['2015', 5, 1]
@@ -104,8 +104,8 @@ function drawChart(id) {
 }
 //--------------------------------------------------------------------------------
 // Widget type #2: Countries map
-google.load("visualization", "1", {packages:["geochart"]});
-function drawCountriesMap(id, jsonData) {
+google.load("visualization", "1", {packages: ["geochart"]});
+function drawSalesCountriesMap(id, jsonData) {
     dict = {};
     for (i = 0; i < jsonData['content']['entities'].length; i++) {
         var country = jsonData['content']['entities'][i]['country_code'];
@@ -120,13 +120,12 @@ function drawCountriesMap(id, jsonData) {
     keys = Object.keys(dict);
     result = [["Country", "Total invoices"]];
     for (j = 0; j < keys.length; j++) {
-        result[j+1] = [keys[j], dict[keys[j]]];
+        result[j + 1] = [keys[j], dict[keys[j]]];
     }
 
     var data = google.visualization.arrayToDataTable(result);
 
-    var options = {
-    };
+    var options = {};
 
     var chart = new google.visualization.GeoChart(document.getElementById('widget' + id));
 
@@ -134,10 +133,10 @@ function drawCountriesMap(id, jsonData) {
 }
 //--------------------------------------------------------------------------------
 // Widget type #3: Cities map
-function drawMarkersMap(id, jsonData) {
+function drawSalesCitiesMap(id, jsonData) {
     result = [["City", "Total invoices"]];
     for (j = 0; j < jsonData['content']['entities'].length; j++) {
-        result[j+1] = [jsonData['content']['entities'][j]['city'], jsonData['content']['entities'][j]['total_invoiced']];
+        result[j + 1] = [jsonData['content']['entities'][j]['city'], jsonData['content']['entities'][j]['total_invoiced']];
     }
 
     var data = google.visualization.arrayToDataTable(result);
@@ -153,12 +152,12 @@ function drawMarkersMap(id, jsonData) {
 }
 //--------------------------------------------------------------------------------
 // Widget type #4: Cities piechart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 
-function drawPieChart(id, jsonData) {
+function drawSalesDataChart(id, jsonData) {
     result = [["City", "Total invoices summary by cities"]];
     for (j = 0; j < jsonData['content']['entities'].length; j++) {
-        result[j+1] = [jsonData['content']['entities'][j]['city'] + ", " + jsonData['content']['entities'][j]['country_code'],
+        result[j + 1] = [jsonData['content']['entities'][j]['city'] + ", " + jsonData['content']['entities'][j]['country_code'],
             jsonData['content']['entities'][j]['total_invoiced']];
     }
 
@@ -168,8 +167,7 @@ function drawPieChart(id, jsonData) {
         title: 'Total invoices summary',
         legend: 'none',
         pieSliceText: 'label',
-        slices: {
-        }
+        slices: {}
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('widget' + id));

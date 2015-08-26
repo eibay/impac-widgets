@@ -12,12 +12,12 @@ var invoices_json;
 
             if (index >= 0) {
                 id = index;
-                $("#widget" + index).empty();
             } else if (isClicked) {
                 id = $scope.clicked;
             } else {
                 id = $scope.getEmptySpace();
             }
+            $("#widget" + id).empty();
 
             $scope.widgets[id].isEnabled = true;
             $scope.widgets[id].name = $scope.getWidgetTitle(widgetTypeId);
@@ -26,10 +26,10 @@ var invoices_json;
             $scope.executeWidget(widgetTypeId, id);
         };
 
-        // should reconsider after new widget addition
         $scope.closeWidget = function (id) {
             $scope.widgets[id].name = "";
             $scope.widgets[id].isEnabled = false;
+            invoices_json = "";
 
             $('div.move_widget_div' + id).removeClass("move_widget_div" + id).addClass("widget_div" + id);
         };
@@ -50,6 +50,36 @@ var invoices_json;
             return name;
         };
 
+        $scope.executeWidget = function (widgetTypeId, id) {
+            $('div.widget_div' + id).removeClass("widget_div" + id).addClass("move_widget_div" + id);
+            switch (widgetTypeId) {
+                case 0:
+                    drawEmployeesCityMap(id);
+                    break;
+                case 1:
+                    drawEmployeesDataChart(id);
+                    break;
+                case 2:
+                    if (invoices_json)
+                        drawSalesCountriesMap(id, invoices_json);
+                    else
+                        $scope.getJSON(widgetUrls[1], id, drawSalesCountriesMap);
+                    break;
+                case 3:
+                    if (invoices_json)
+                        drawSalesCitiesMap(id, invoices_json);
+                    else
+                        $scope.getJSON(widgetUrls[1], id, drawSalesCitiesMap);
+                    break;
+                case 4:
+                    if (invoices_json)
+                        drawSalesDataChart(id, invoices_json);
+                    else
+                        $scope.getJSON(widgetUrls[1], id, drawSalesDataChart);
+                    break;
+            }
+        };
+
         $scope.clickedPanel = function (id) {
             $scope.clicked = id;
         };
@@ -61,36 +91,6 @@ var invoices_json;
                 }
             }
             return -1;
-        };
-
-        $scope.executeWidget = function (widgetTypeId, id) {
-            $('div.widget_div' + id).removeClass("widget_div" + id).addClass("move_widget_div" + id);
-            switch (widgetTypeId) {
-                case 0:
-                    initMap(id);
-                    break;
-                case 1:
-                    drawChart(id);
-                    break;
-                case 2:
-                    if (invoices_json)
-                        drawCountriesMap(id, invoices_json);
-                    else
-                        $scope.getJSON(widgetUrls[1], id, drawCountriesMap);
-                    break;
-                case 3:
-                    if (invoices_json)
-                        drawMarkersMap(id, invoices_json);
-                    else
-                        $scope.getJSON(widgetUrls[1], id, drawMarkersMap);
-                    break;
-                case 4:
-                    if (invoices_json)
-                        drawPieChart(id, invoices_json);
-                    else
-                        $scope.getJSON(widgetUrls[1], id, drawPieChart);
-                    break;
-            }
         };
 
         $scope.getJSON = function (uri, id, functionCallback) {
@@ -107,7 +107,7 @@ var invoices_json;
         };
     }]);
 
-    app.directive('widget', function(){
+    app.directive('widget', function () {
         return {
             restrict: "E",
             templateUrl: "widget.html"

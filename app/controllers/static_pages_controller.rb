@@ -15,7 +15,7 @@ class StaticPagesController < ApplicationController
   $google_api_key = "AIzaSyAZZ6GQlDw3uHU4tXGF6kYfjQYu44fIxiU"
 
   $maestrano_credentials = {:ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE,
-                            :http_basic_authentication=>['72db99d0-05dc-0133-cefe-22000a93862b', '_cIOpimIoDi3RIviWteOTA']}
+                            :http_basic_authentication => ['72db99d0-05dc-0133-cefe-22000a93862b', '_cIOpimIoDi3RIviWteOTA']}
 
   def home
   end
@@ -26,7 +26,7 @@ class StaticPagesController < ApplicationController
 
   def employees
     new_employees_json = []
-    employees_list = JSON.parse(get_request($employees_list_api, $maestrano_credentials))
+    employees_list = get_request($employees_list_api, $maestrano_credentials)
     employees_list["content"]["employees"].each do |item|
       city = ""
       country = ""
@@ -69,7 +69,25 @@ class StaticPagesController < ApplicationController
   end
 
   def cities
-    render js: 'eqfeed_callback({"type":"FeatureCollection", "features":[{"type":"Feature","properties":{"count":5,"title":"San Francisco"},"geometry":{"type":"Point","coordinates":[-122.4382307,37.8020405]}},{"type":"Feature","properties":{"count":1,"title":"Sydney"},"geometry":{"type":"Point","coordinates":[151.2064365,-33.8706469]}}], "bbox":[-180.0,-180.0,180.0,180.0]})'
+    data = {}
+    data[:type] = "FeatureCollection"
+    features = []
+    cities = [[5, "San Francisco", -122.4382307, 37.8020405], [1, "Sydney", 151.2064365, -33.8706469]]
+    cities.each do |item|
+      feature = {}
+      feature[:type] = "Feature"
+      feature[:properties] = {count: item[0], title: item[1]}
+      geometry = {}
+      geometry[:type] = "Point"
+      geometry[:coordinates] = [item[2], item[3]]
+      feature[:geometry] = geometry
+      features.append(feature)
+    end
+
+    data[:features] = features
+    data[:bbox] = [-180, -180, 180, 180]
+
+    render js: 'eqfeed_callback(' + JSON.generate(data) + ")"
   end
 
   private
