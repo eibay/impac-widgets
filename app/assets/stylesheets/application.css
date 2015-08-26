@@ -23,9 +23,4 @@ div.widget_div0, div.widget_div1 {
 .move_widget_div0, .move_widget_div1 {
     left: 0 !important;
 }
-div.widget0, div.widget1 {
-    height: 100%;
-    width: 100%;
-    margin-bottom: 10px;
-    background: transparent url('<%= asset_path("ajax-loader.gif") %>') no-repeat center center;
-}
+
