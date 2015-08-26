@@ -1,6 +1,7 @@
 # Maestrano Widgets
 
 This is a web app designed to show sample implementation of Maestrano Widgets using their APIs. There are two types of widgets:
+
 1. "Employees location" widget
 2. "Sales flow" widget
 
